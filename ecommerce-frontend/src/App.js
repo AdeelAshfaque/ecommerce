@@ -11,26 +11,32 @@ import AdminProducts from './pages/Admin/AdminProducts';
 import AdminOrders from './pages/Admin/AdminOrders';
 import ProductDetail from './pages/ProductDetail';
 
-function App() {
+// ✅ Check token fresh every time
+const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
+  return token ? children : <Navigate to="/login" />;
+};
 
+const AdminRoute = ({ children }) => {
+  const role = localStorage.getItem('role');
+  return role === 'admin' ? children : <Navigate to="/products" />;
+};
+
+function App() {
   return (
     <Router>
       <Routes>
-
         <Route path="/" element={<Navigate to="/products" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/order-success" element={<OrderSuccess />} />
-        <Route path="/orders" element={token ? <Orders /> : <Navigate to="/login" />} />
-        <Route path="/admin/products" element={<AdminProducts />} />
-        <Route path="/admin/orders" element={<AdminOrders />} />
-        <Route path="/products/:id" element={<ProductDetail />} />
-        <Route path="/products/:id" element={<ProductDetail />} />
-      
+        <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
+        <Route path="/order-success" element={<PrivateRoute><OrderSuccess /></PrivateRoute>} />
+        <Route path="/orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
+        <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+        <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
       </Routes>
     </Router>
   );

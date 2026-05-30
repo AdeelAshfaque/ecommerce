@@ -97,32 +97,28 @@ function Products() {
         <h2 style={styles.logo}>Ecommerce</h2>
 
         <div style={styles.navLinks}>
-          {isAdmin() && (
-            <Link to="/admin/products" style={styles.adminLink}>
-              Admin Panel
-            </Link>
-          )}
-
-          <Link to="/cart" style={styles.navLink}>
-            Cart
-          </Link>
-
-          {token ? (
-            <>
-              <Link to="/orders" style={styles.navLink}>
-                My Orders
-              </Link>
-
-              <button onClick={handleLogout} style={styles.logoutBtn}>
-                Logout
-              </button>
-            </>
-          ) : (
-            <Link to="/login" style={styles.navLink}>
-              Login
-            </Link>
-          )}
-        </div>
+  {isAdmin() ? (
+    // Admin navbar
+    <>
+      <Link to="/admin/products" style={styles.adminLink}>Admin Panel</Link>
+      <Link to="/admin/orders" style={styles.navLink}>All Orders</Link>
+      <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
+    </>
+  ) : token ? (
+    // Logged in customer navbar
+    <>
+      <Link to="/cart" style={styles.navLink}>🛒 Cart</Link>
+      <Link to="/orders" style={styles.navLink}>My Orders</Link>
+      <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
+    </>
+  ) : (
+    // Guest navbar
+    <>
+      <Link to="/cart" style={styles.navLink}>🛒 Cart</Link>
+      <Link to="/login" style={styles.navLink}>Login</Link>
+    </>
+  )}
+</div>
       </div>
 
       <div style={styles.hero}>
@@ -289,19 +285,14 @@ function Products() {
                   <p style={styles.desc}>{p.description}</p>
 
                   <div style={styles.cardFooter}>
-                    <div>
-                      <p style={styles.price}>${p.price}</p>
-
-                      {p.stock > 0 ? (
-                        <span style={styles.stock}>
-                          {p.stock} in stock
-                        </span>
-                      ) : (
-                        <span style={styles.outStock}>
-                          Out of stock
-                        </span>
-                      )}
-                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <span style={styles.price}>${p.price}</span>
+                                {p.stock > 0 ? (
+                              <span style={styles.stock}>{p.stock} in stock</span>
+                              ) : (
+                             <span style={styles.outStock}>Out of stock</span>
+                            )}
+                      </div>
 
                     <button
                       style={{
@@ -576,7 +567,11 @@ const styles = {
     color: '#64748b',
     fontSize: '14px',
     lineHeight: '1.6',
-    minHeight: '45px',
+    height: '65px',
+    overflow: 'hidden',
+    display: '-webkit-box',
+    WebkitLineClamp: 3,
+    WebkitBoxOrient: 'vertical',
   },
 
   cardFooter: {
@@ -586,11 +581,13 @@ const styles = {
     alignItems: 'center',
   },
 
-  price: {
+ price: {
     margin: 0,
+    padding: 0,
     fontSize: '24px',
     fontWeight: 'bold',
     color: '#2563eb',
+    lineHeight: '1',
   },
 
   stock: {
