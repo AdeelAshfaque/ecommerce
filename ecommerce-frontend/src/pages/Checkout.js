@@ -12,7 +12,7 @@ function Checkout() {
   const token = localStorage.getItem('token');
 
   const [shipping, setShipping] = useState({
-    fullName: '', phone: '', address: '', city: '', country: ''
+    fullName: '', phone: '', address: '', city: '', country: '', email: ''
   });
 
   const [payment, setPayment] = useState({
@@ -77,7 +77,7 @@ function Checkout() {
 
 await API.post('/orders/', {
   user_id: getUserId() || null,
-  guest_email: null,
+  guest_email: token ? null : shipping.email,
   items: items,
   shipping_address: fullAddress,
 });
@@ -149,6 +149,9 @@ await API.post('/orders/', {
             <h4 style={styles.sectionTitle}>📦 Shipping Details</h4>
             <form onSubmit={handleShippingSubmit}>
               <input style={styles.input} name="fullName" placeholder="Full Name" value={shipping.fullName} onChange={handleShippingChange} />
+{!token && (
+    <input style={styles.input} name="email" placeholder="Email (for order updates)" value={shipping.email} onChange={handleShippingChange} />
+)}
               <input style={styles.input} name="phone" placeholder="Phone Number" value={shipping.phone} onChange={handleShippingChange} />
               <input style={styles.input} name="address" placeholder="Street Address" value={shipping.address} onChange={handleShippingChange} />
               <div style={styles.row}>
